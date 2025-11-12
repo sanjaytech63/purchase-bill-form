@@ -11,9 +11,10 @@ import ProductTable from './ProductTable';
 import EWayBillModal from './EWayBillModal';
 import FormField from './FormField';
 import { ProductRow, EWayBill } from '@/types';
+import type { BaseSelectRef } from 'rc-select';
 
 const PurchaseBillForm: React.FC = () => {
-    const vendorSelectRef = useRef<HTMLInputElement | null>(null);
+    const vendorSelectRef = useRef<BaseSelectRef>(null);
     const [showEWayBillModal, setShowEWayBillModal] = useState(false);
     const [filteredPOs, setFilteredPOs] = useState(purchaseOrders);
 

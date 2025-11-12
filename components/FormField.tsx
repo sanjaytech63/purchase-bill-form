@@ -3,6 +3,9 @@ import { Form, Input, Select, DatePicker } from 'antd';
 import { UseFormRegister, UseFormSetValue, UseFormTrigger } from 'react-hook-form';
 import { PurchaseBillFormData } from '@/lib/validation';
 import { FormErrors, getErrorMessage } from '@/lib/errorUtils';
+import type { BaseSelectRef } from 'rc-select';
+import type { InputRef } from 'antd';
+
 const { Option } = Select;
 
 interface FormFieldProps {
@@ -20,7 +23,7 @@ interface FormFieldProps {
     placeholder?: string;
     autoFocus?: boolean;
     onKeyDown?: (e: React.KeyboardEvent) => void;
-    selectRef?: React.Ref<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>;
+    selectRef?: React.Ref<BaseSelectRef>;
 }
 
 const FormField: React.FC<FormFieldProps> = ({
@@ -40,7 +43,7 @@ const FormField: React.FC<FormFieldProps> = ({
     onKeyDown,
     selectRef,
 }) => {
-    const inputRef = useRef<HTMLInputElement | null>(null);
+    const inputRef = useRef<InputRef>(null);
     const error = getErrorMessage(errors, name);
     const fieldId = `field-${name}`;
 
