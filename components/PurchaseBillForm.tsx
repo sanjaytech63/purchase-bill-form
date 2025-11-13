@@ -88,11 +88,16 @@ const PurchaseBillForm: React.FC = () => {
     if (vendorId) {
       const filtered = purchaseOrders.filter((po) => po.vendorId === vendorId);
       setFilteredPOs(filtered);
-      setValue("poNumber", "");
+
+      const currentPO = formValues.poNumber;
+      const isPOValid = filtered.some((po) => po.poNumber === currentPO);
+      if (!isPOValid) {
+        setValue("poNumber", "");
+      }
     } else {
       setFilteredPOs([]);
     }
-  }, [vendorId, setValue]);
+  }, [vendorId, setValue, formValues.poNumber]);
 
   useEffect(() => {
     const total =
@@ -112,26 +117,22 @@ const PurchaseBillForm: React.FC = () => {
   };
 
   const handleSave = (status: "draft" | "saved") => {
-    handleSubmit((data) => {
-      const formData = { ...data, status };
+    if (status === "draft") {
+      const formData = { ...formValues, status };
       saveFormData(formData);
-
-      if (status === "saved") {
+      message.success("Saved as Draft");
+      console.log("Draft saved:", formData);
+    } else {
+      handleSubmit((data) => {
+        const formData = { ...data, status };
+        saveFormData(formData);
         message.success("Saved (mock)");
         console.log("Form Data:", formData);
-      } else {
-        message.success("Saved as Draft");
-      }
-    })().catch((error) => {
-      console.error("Validation failed:", error);
-      if (status === "saved") {
+      })().catch((error) => {
+        console.error("Validation failed:", error);
         message.error("Please fix validation errors before saving");
-      }
-    });
-  };
-
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    // todo working on after 1 hour keyboard handling here
+      });
+    }
   };
 
   return (
@@ -155,7 +156,6 @@ const PurchaseBillForm: React.FC = () => {
               options={vendors}
               autoFocus={true}
               selectRef={vendorSelectRef}
-              onKeyDown={handleKeyDown}
               placeholder="Select Vendor"
             />
           </Col>
@@ -175,7 +175,6 @@ const PurchaseBillForm: React.FC = () => {
                 name: po.poNumber,
               }))}
               disabled={!vendorId}
-              onKeyDown={handleKeyDown}
               placeholder="Select Purchase Order"
             />
           </Col>
@@ -194,7 +193,6 @@ const PurchaseBillForm: React.FC = () => {
               setValue={setValue}
               trigger={trigger}
               value={formValues.billNumber}
-              onKeyDown={handleKeyDown}
               placeholder="Enter Bill Number"
             />
           </Col>
@@ -209,7 +207,6 @@ const PurchaseBillForm: React.FC = () => {
               setValue={setValue}
               trigger={trigger}
               value={formValues.billDate}
-              onKeyDown={handleKeyDown}
             />
           </Col>
           <Col xs={24} md={8}>
@@ -223,7 +220,6 @@ const PurchaseBillForm: React.FC = () => {
               setValue={setValue}
               trigger={trigger}
               value={formValues.dueDate}
-              onKeyDown={handleKeyDown}
             />
           </Col>
         </Row>
@@ -242,7 +238,6 @@ const PurchaseBillForm: React.FC = () => {
               trigger={trigger}
               value={formValues.paymentMethod}
               options={paymentMethods}
-              onKeyDown={handleKeyDown}
               placeholder="Select Payment Method"
             />
           </Col>
@@ -258,7 +253,6 @@ const PurchaseBillForm: React.FC = () => {
               trigger={trigger}
               value={formValues.transportAgency}
               options={transportAgencies}
-              onKeyDown={handleKeyDown}
               placeholder="Select Transport Agency"
             />
           </Col>
